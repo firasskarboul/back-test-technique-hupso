@@ -2,14 +2,12 @@
 
 ## Overview
 
-This project involves setting up a RESTful API within existing controllers, creating an interface to view books, and filtering them by genre and availability.
-
 ### Backend
 
 A repository with a Symfony (SF) project setup will be provided. It includes:
 
 - **Book Entity & Migration**: A `Book` entity with its associated migration and fixtures.
-- **List Endpoint with Filters**: Implement an endpoint for listing books with filters for title, genre, and publication year.
+- **List Endpoint with Filters**: Implement an endpoint for listing books with filters for title, category, and publication year.
 - **Booking Entity & Creation Endpoint**: Set up a `Booking` entity and an endpoint for creating a booking.
 
 
@@ -21,7 +19,7 @@ This guide outlines the steps for setting up a `List` endpoint with specific fil
 
 ### List Endpoint with Filters
 
-The `List` endpoint should allow users to filter books based on title, genre, and publication year. This feature enhances the user experience by providing a tailored browsing option.
+The `List` endpoint should allow users to filter books based on title, category, and publication year. This feature enhances the user experience by providing a tailored browsing option.
 
 #### Implementation Steps:
 
@@ -73,7 +71,7 @@ The `Booking` entity represents a reservation made by a user for a specific book
 - **Description**: Long text
 - **Author**: String
 - **Publication Date**: DateTime
-- **Genre**: String
+- **Category**: String
 
 ## Getting Started
 
