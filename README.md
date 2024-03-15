@@ -39,7 +39,7 @@ The `Booking` entity represents a reservation made by a user for a specific book
 
 - **Fields**:
   - Book ID (Foreign Key)
-  - User ID (Foreign Key) / Email (use email for simplicity Or set up User table)
+  - User ID (Foreign Key) / Email (use email for simplicity Or set up a User table as a bonus)
   - Start Date
   - End Date
   - Status (e.g., active, cancelled)
