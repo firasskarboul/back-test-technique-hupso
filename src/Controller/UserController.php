@@ -11,16 +11,18 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class UserController extends AbstractController
 {
-
+    private $security;
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(Security $security, EntityManagerInterface $entityManager)
     {
+        $this->security = $security;
         $this->entityManager = $entityManager;
     }
 
@@ -71,5 +73,19 @@ class UserController extends AbstractController
         $token = $jwtManager->create($user);
 
         return new JsonResponse(['token' => $token]);
+    }
+
+    #[Route('/api/user', name: 'api_user', methods: ['GET'])]
+    public function me(): JsonResponse
+    {
+        $user = $this->security->getUser();
+
+        if (!$user) {
+            return $this->json(['error' => 'User not found'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        return $this->json([
+            'email' => $user->getUserIdentifier()
+        ]);
     }
 }
