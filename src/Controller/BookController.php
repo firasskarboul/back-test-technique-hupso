@@ -104,4 +104,36 @@ class BookController extends AbstractController
 
         return new JsonResponse($data, Response::HTTP_OK);
     }
+
+    #[Route('/api/categories', name: 'get_all_categories', methods: ['GET'])]
+    public function getAllCategories(BookRepository $bookRepository): JsonResponse
+    {
+        try {
+            $categories = $bookRepository->findDistinctCategories();
+        } catch (\Exception $e) {
+            return new JsonResponse(['message' => 'An error occurred while retrieving categories: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $data = array_map(function ($category) {
+            return $category['category'];
+        }, $categories);
+
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+    #[Route('/api/years', name: 'get_all_years', methods: ['GET'])]
+    public function getAllYears(BookRepository $bookRepository): JsonResponse
+    {
+        try {
+            $years = $bookRepository->findDistinctPublicationYears();
+        } catch (\Exception $e) {
+            return new JsonResponse(['message' => 'An error occurred while retrieving publication years: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $data = array_map(function ($year) {
+            return $year['year'];
+        }, $years);
+
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
 }

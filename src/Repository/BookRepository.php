@@ -54,6 +54,30 @@ class BookRepository extends ServiceEntityRepository
         return $result->fetchAllAssociative();
     }
 
+    /**
+     * @return array Returns an array of distinct categories
+     */
+    public function findDistinctCategories(): array
+    {
+        $sql = 'SELECT DISTINCT category FROM book';
+        $stmt = $this->connection->prepare($sql);
+        $result = $stmt->executeQuery();
+
+        return $result->fetchAllAssociative();
+    }
+
+    /**
+     * @return array Returns an array of distinct publication years
+     */
+    public function findDistinctPublicationYears(): array
+    {
+        $sql = 'SELECT DISTINCT EXTRACT(YEAR FROM published_at) AS year FROM book ORDER BY year';
+        $stmt = $this->connection->prepare($sql);
+        $result = $stmt->executeQuery();
+
+        return $result->fetchAllAssociative();
+    }
+
     //    /**
     //     * @return Book[] Returns an array of Book objects
     //     */
