@@ -28,7 +28,7 @@ class BookRepository extends ServiceEntityRepository
     /**
      * @return Book[] Returns an array of Book objects based on filters
      */
-    public function findByFilters(?string $title, ?string $category, ?string $publishedYear): array
+    public function findByFilters(?string $title, ?string $category, ?string $publishedYear, ?int $available): array
     {
         $sql = 'SELECT * FROM book WHERE 1=1';
         $params = [];
@@ -46,6 +46,18 @@ class BookRepository extends ServiceEntityRepository
         if ($publishedYear) {
             $sql .= ' AND EXTRACT(YEAR FROM published_at) = :publishedYear';
             $params['publishedYear'] = $publishedYear;
+        }
+
+        if ($available === 1) {
+            $sql .= ' AND id NOT IN (
+                SELECT b.book_id 
+                FROM booking b 
+                WHERE b.status = \'active\' 
+                AND (
+                    :currentDate BETWEEN b.start_date AND b.end_date
+                )
+            )';
+            $params['currentDate'] = (new \DateTime())->format('Y-m-d');
         }
 
         $stmt = $this->connection->prepare($sql);

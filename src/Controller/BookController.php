@@ -55,9 +55,10 @@ class BookController extends AbstractController
         $title = $request->query->get('title');
         $category = $request->query->get('category');
         $publishedYear = $request->query->get('publishedYear');
+        $available = $request->query->get('availability');
 
         try {
-            $books = $bookRepository->findByFilters($title, $category, $publishedYear);
+            $books = $bookRepository->findByFilters($title, $category, $publishedYear, $available);
         } catch (\Exception $e) {
             return new JsonResponse(['message' => 'An error occurred while retrieving books: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

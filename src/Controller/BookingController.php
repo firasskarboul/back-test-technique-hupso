@@ -29,7 +29,7 @@ class BookingController extends AbstractController
     #[Route('/api/bookings', name: 'get_all_bookings', methods: ['GET'])]
     public function getAllBookings(BookingRepository $bookingRepository, UtilisateurRepository $utilisateurRepository): JsonResponse
     {
-        
+
         $user = $utilisateurRepository->find($this->security->getUser());
         if (!$user) {
             return new JsonResponse(['message' => 'User not found'], Response::HTTP_UNAUTHORIZED);
@@ -58,6 +58,7 @@ class BookingController extends AbstractController
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         BookRepository $bookRepository,
+        BookingRepository $bookingRepository,
         UtilisateurRepository $utilisateurRepository
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
@@ -74,6 +75,13 @@ class BookingController extends AbstractController
         $user = $utilisateurRepository->find($this->security->getUser());
         if (!$user) {
             return new JsonResponse(['message' => 'User not found'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $startDate = new \DateTime($data['startDate']);
+        $endDate = new \DateTime($data['endDate']);
+
+        if (!$bookingRepository->isBookAvailable($book, $startDate, $endDate)) {
+            return new JsonResponse(['message' => 'The book is not available for the requested period'], Response::HTTP_CONFLICT);
         }
 
         $booking = new Booking();
@@ -97,13 +105,23 @@ class BookingController extends AbstractController
             return new JsonResponse(['message' => 'An error occurred while saving the booking: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
+        $bookingData = [
+            'startDate' => $booking->getStartDate()->format('Y-m-d H:i:s'),
+            'endDate' => $booking->getEndDate()->format('Y-m-d H:i:s'),
+            'status' => $booking->getStatus()
+        ];
+
+        return new JsonResponse([
+            'message' => 'Booking added successfully',
+            'booking' => $bookingData
+        ], Response::HTTP_CREATED);
+
         return new JsonResponse(['message' => 'Booking added successfully'], Response::HTTP_CREATED);
     }
 
     #[Route('/api/bookings/{id}/status', name: 'update_booking_status', methods: ['PATCH'])]
     public function cancelLoan(
         int $id,
-        Request $request,
         BookingRepository $bookingRepository,
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator

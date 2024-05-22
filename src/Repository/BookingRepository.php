@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Book;
 use App\Entity\Booking;
 use App\Entity\Utilisateur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -37,4 +38,25 @@ class BookingRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Check if a book is available for the requested period
+     */
+    public function isBookAvailable(Book $book, \DateTimeInterface $startDate, \DateTimeInterface $endDate): bool
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->where('b.book = :book')
+            ->andWhere('b.status = :status')
+            ->andWhere('b.startDate <= :endDate')
+            ->andWhere('b.endDate >= :startDate')
+            ->setParameter('book', $book)
+            ->setParameter('status', 'active')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate);
+
+        $result = $qb->getQuery()->getResult();
+
+        return count($result) === 0;
+    }
+
 }
