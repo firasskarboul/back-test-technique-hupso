@@ -15,6 +15,7 @@
         "doctrine/orm": "^3.1",
         "fakerphp/faker": "^1.23",
         "lexik/jwt-authentication-bundle": "^3.0",
+        "nelmio/cors-bundle": "^2.4",
         "symfony/console": "7.0.*",
         "symfony/dotenv": "7.0.*",
         "symfony/flex": "^2",

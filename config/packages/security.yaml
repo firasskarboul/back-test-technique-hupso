@@ -19,6 +19,18 @@ security:
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        register:
+            pattern: ^/api/register
+            stateless: true
+            security: false
+        api_public:
+            pattern: ^/api/books/\d+$
+            stateless: true
+            security: false
+        book_api:
+            pattern: ^/api/books
+            stateless: true
+            security: false
         api:
             pattern: ^/api
             stateless: true
@@ -42,6 +54,9 @@ security:
     access_control:
         - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/books/\d+$, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [GET] }
+        - { path: ^/api/books$, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [GET] }
+        - { path: ^/api/books, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }

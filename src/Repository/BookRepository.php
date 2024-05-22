@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Connection;
 
 /**
  * @extends ServiceEntityRepository<Book>
@@ -16,9 +17,41 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BookRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $connection;
+
+    public function __construct(ManagerRegistry $registry, Connection $connection)
     {
         parent::__construct($registry, Book::class);
+        $this->connection = $connection;
+    }
+
+    /**
+     * @return Book[] Returns an array of Book objects based on filters
+     */
+    public function findByFilters(?string $title, ?string $category, ?string $publishedYear): array
+    {
+        $sql = 'SELECT * FROM book WHERE 1=1';
+        $params = [];
+
+        if ($title) {
+            $sql .= ' AND title LIKE :title';
+            $params['title'] = '%' . $title . '%';
+        }
+
+        if ($category) {
+            $sql .= ' AND category = :category';
+            $params['category'] = $category;
+        }
+
+        if ($publishedYear) {
+            $sql .= ' AND EXTRACT(YEAR FROM published_at) = :publishedYear';
+            $params['publishedYear'] = $publishedYear;
+        }
+
+        $stmt = $this->connection->prepare($sql);
+        $result = $stmt->executeQuery($params);
+
+        return $result->fetchAllAssociative();
     }
 
     //    /**
