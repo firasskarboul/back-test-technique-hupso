@@ -24,11 +24,7 @@ security:
             stateless: true
             security: false
         api_public:
-            pattern: ^/api/books/\d+$
-            stateless: true
-            security: false
-        book_api:
-            pattern: ^/api/books
+            pattern: ^/api/(categories|years|books/\d+$|books)
             stateless: true
             security: false
         api:
@@ -54,6 +50,8 @@ security:
     access_control:
         - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/categories, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/years, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/books/\d+$, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [GET] }
         - { path: ^/api/books$, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [GET] }
         - { path: ^/api/books, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }

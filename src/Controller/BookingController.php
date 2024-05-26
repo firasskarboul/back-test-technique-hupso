@@ -39,10 +39,17 @@ class BookingController extends AbstractController
         $data = [];
 
         foreach ($bookings as $booking) {
+            $book = $booking->getBook();
             $data[] = [
                 'id' => $booking->getId(),
-                'bookId' => $booking->getBook()->getId(),
-                'userId' => $booking->getUser()->getId(),
+                'book' => [
+                    'id' => $book->getId(),
+                    'title' => $book->getTitle(),
+                    'description' => $book->getDescription(),
+                    'author' => $book->getAuthor(),
+                    'publishedAt' => $book->getPublishedAt()->format('Y-m-d'),
+                    'category' => $book->getCategory()
+                ],
                 'startDate' => $booking->getStartDate()->format('Y-m-d H:i:s'),
                 'endDate' => $booking->getEndDate()->format('Y-m-d H:i:s'),
                 'status' => $booking->getStatus(),
@@ -148,6 +155,6 @@ class BookingController extends AbstractController
             return new JsonResponse(['message' => 'An error occurred while updating the booking: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new JsonResponse(['message' => 'Booking status updated successfully'], Response::HTTP_OK);
+        return new JsonResponse(['message' => 'Booking cancelled successfully'], Response::HTTP_OK);
     }
 }
